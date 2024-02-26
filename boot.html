@@ -40,6 +40,9 @@
                 <a href="#" ng-click="cart1()">CART</a>
                 <a href="#" ng-click="pay()">PAYMENT</a>
             </div>
+            <div ng-show="homee">
+              <img src="background.jpeg" id="www1" style="height: 100%; width:100%">
+            </div>
             <div ng-show="womenn" id="product">
                 <div class="row row-cols-1 row-cols-md-4 g-4">
                     <div class="col"  ng-repeat="product in products" >
@@ -48,7 +51,7 @@
                         <div class="card-body">
                           <h5 class="card-title" style="text-align: center;">{{product.p_rate}}</h5>
                           &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-dark" ng-click="add(product)">ADD TO CART</button>
-                          &nbsp;&nbsp;<button class="btn btn-dark">BUY NOW</button>
+                          &nbsp;&nbsp;<button class="btn btn-dark" ng-click="pay()">BUY NOW</button>
                           
                         </div>
                       </div>
@@ -64,13 +67,13 @@
                       <div class="card-body">
                         <h5 class="card-title" style="text-align: center;">{{man.p_rate}}</h5>
                         &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-dark" ng-click="addMen(man)">ADD TO CART</button>
-                        &nbsp;&nbsp;<button class="btn btn-dark">BUY NOW</button>
+                        &nbsp;&nbsp;<button class="btn btn-dark" ng-click="pay()" >BUY NOW</button>
                         
                       </div>
                     </div>
                   </div>
           </div></div>
-            <div ng-show="cartt" >
+           <!--<div ng-show="cartt" >
               <h1>Cart products</h1>
               <div class="row row-cols-1 row-cols-md-4 g-4">
                   <div class="col"  ng-repeat="cart in carts" >
@@ -85,8 +88,26 @@
                         
                       </div>
                     </div>
+                  </div><h5>Total Amount:{{total}}</h5>
+          </div>
+        </div>-->
+        <div ng-show="cartt">
+          <h1>Cart products</h1>
+          <div class="row row-cols-1 row-cols-md-4 g-4">
+              <div class="col" ng-repeat="(item, cart) in carts">
+                  <div class="card">
+                      <img src="{{cart.p_in}}" class="card-img-top" alt="...">
+                      <div class="card-body">
+                          <h5 class="card-title" style="text-align: center;">{{cart.p_rate}}</h5>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-dark" ng-click="remove($item)">REMOVE</button>
+                          &nbsp;&nbsp;&nbsp;<button class="btn btn-dark" ng-click="pay()">BUY NOW</button>
+                      </div>
                   </div>
-          </div></div>
+              </div>
+          </div>
+          <h5>Total Amount: {{getTotal()}}</h5>
+      </div>
+      
           <div ng-show="payy">
             <center><h1>ORDER</h1>
               <h3>Customer Details</h3></center>
@@ -95,15 +116,15 @@
                       
                       <p>Enter your Ph.no: <input type="text" ng-model="phno"></p>
                       
-                      <p>Enter your address: <input type="textarea" ng-model="address"></p>
+                      <p>Enter your Address: <input type="textarea" ng-model="address"></p>
                       
                       <p>Enter your District: <input type="text" ng-model="dist"></p>
                       <h4>Check details</h4>
-                      <p ng-bind="name"></p>
-                      <p ng-bind="phno"></p>
-                      <p ng-bind="address"></p>
-                      <p ng-bind="dist"></p>
-                      <button id="btn"  onclick="payment()">NEXT</button>
+                      <b>Name    :&nbsp;&nbsp;&nbsp;<p ng-bind="name"></p></b>
+                      <b>Ph.no   :<p ng-bind="phno"></p></b>
+                      <b>Address :<p ng-bind="address"></p></b>
+                      <b>District:<p ng-bind="dist"></p></b>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="btn" style="background-color: black; color:white" onclick="pay()">NEXT</button>
                       <h3>Select a payment method</h3>
                       <form action="javascript:void(0)"><input type="radio" id="r1" ng-model="payment" value="credit" ng-change="handle()">Credit or debit card<br>
                 <input type="radio" id="r2"ng-model="payment"value="UPI" ng-change="handle()">Other UPI Apps<br>
@@ -121,8 +142,17 @@
                 <div ng-if="payment ==='cash'">
                   Your order is placed and delivered within 5 days.
                 </div>
-                <br><br>
-                <button id="pay" ng-click="getVal()">MAKE PAYMENT</button></form>
+                <center><table id="table">
+                  <th>Enter your card details</th>
+                  <tr><td><label id="l1">Enter your card number:</label></td></tr>
+                  <tr><td><input type="text"  minlength="5" maxlength="15" id="t1" required></td></tr>
+                  <tr><td><label id="l2">Enter CVV:</label></td></tr>
+                  <tr><td><input type="password"  minlength="3" maxlength="3" id="t2" required></td></tr>
+                  <tr><td><h4>Amount: {{getTotal()}}</h4></td></tr>
+                  <br><br>
+              </table></center>
+              <center><button id="pay" style="background-color: black; color:white" ng-click="getval(total)">MAKE PAYMENT</button></center>
+                </form>
           </div>
                 
             
@@ -135,11 +165,12 @@
             var app=angular.module('myapp',[])
             .controller('myctrl',function($scope){
               $scope.counts=0;
-              $scope.homee=false;
+              $scope.homee=true;
               $scope.menn=false;
               $scope.womenn=false;
               $scope.cartt=false;
               $scope.payy=false;
+              
               
               $scope.home=function(){
                 $scope.homee=true;
@@ -165,7 +196,7 @@
               };
               $scope.cart1=function()
               {
-                $scope.homee=false;
+              $scope.homee=false;
               $scope.menn=false;
               $scope.womenn=false;
               $scope.cartt=true;
@@ -194,7 +225,7 @@
             ];
             $scope.mens=[
             {p_in:"m1.jpeg",p_rate:"Rs.960"},
-            {p_in:"m2.jpeg",package:"Rs.1160"},
+            {p_in:"m2.jpeg",p_rate:"Rs.1160"},
             {p_in:"m3.jpeg",p_rate:"Rs.780"},
             {p_in:"m4.jpeg",p_rate:"Rs.900"},
             {p_in:"m5.jpeg",p_rate:"Rs.500"},
@@ -202,24 +233,43 @@
             {p_in:"m7.jpeg",p_rate:"Rs.860"},
             {p_in:"m8.jpeg",p_rate:"Rs.1860"}
             ];
+            $scope.total=0;
             $scope.add = function (product) {
               if(product){
                   $scope.carts.push({p_in:product.p_in,p_rate:product.p_rate});
+                  $scope.total+=parseFloat(product.p_rate);
               }
               };
               $scope.addMen = function (men) {
                 if(men){
                     $scope.carts.push({p_in:men.p_in,p_rate:men.p_rate});
+                    $scope.total+=parseFloat(men.p_rate);
                 }
                 };
-                $scope.remove=function(item)
+                /*$scope.remove=function(item)
                 {
                   $scope.carts.splice(item,1);
                 };
                 $scope.count=function()
                 {
                   $scope.counts++;
-                };
+                };*/
+                $scope.getTotal = function () {
+                  var total = 0;
+                  for (var i = 0; i < $scope.carts.length; i++) {
+                      total += parseFloat($scope.carts[i].p_rate.replace('Rs.', ''));
+                  }
+                  return 'Rs. ' + total.toFixed(2);
+              };
+              
+              $scope.remove = function (item) {
+                  var removedItem = $scope.carts.splice(item, 1)[0];
+                  $scope.total -= parseFloat(removedItem.p_rate.replace('Rs.', ''));
+              };
+              $scope.getval=function()
+              {
+                alert("Payment Successfull and your order will be delivered within 5 days");
+              };
                
          });
         </script>
